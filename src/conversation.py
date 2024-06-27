@@ -22,19 +22,19 @@ class Persona:
         """
         return self.chat.ask(_query)
 
+    def research(self, argument: str):
+        query = f"Please use Browser to find relevant information for {argument}"
+        return self.chat.browser_results(query)
+
     def rebut(self, argument: str, history: str):
         argument_summary = self.chat.ask(f"Summarize this argument: {argument}")
+        negative_statement = self.chat.ask(
+            f"Please provide a negative statement for the argument: {argument_summary}"
+        )
         _query = f"""{self.get_history(history)}
-        Please rebut this argument: 
-        {argument_summary}
-        
-        --output format start--
-        List of 
-            rebuttal_main_point: str
-            rebuttal_elaboration: str
-        --output format end--
+        {negative_statement}
         """
-        rebuttal = self.chat.ask(_query)
+        rebuttal = self.research(_query)
         return self.summarize(rebuttal)
 
     def get_history(self, history: str):
@@ -57,7 +57,8 @@ class Persona:
         --output format end--
         """
         argument = self.chat.ask(_query)
-        return self.summarize(argument)
+        _argument = self.research(argument)
+        return self.summarize(_argument)
 
 
 class Conversation:
@@ -91,7 +92,9 @@ class Conversation:
 
 
 def main():
-    conversation = Conversation("WordPress is better than Wix")
+    topic = "WordPress is better than Wix"
+    topic = "A millionaire is happier than a billionaire"
+    conversation = Conversation(topic)
     conversation.converse()
 
 
