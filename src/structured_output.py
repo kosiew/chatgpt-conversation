@@ -94,14 +94,14 @@ class MathResponse(BaseModel):
     final_answer: str
 
 
-def test_response_format(completions, MathResponse):
+def test_response_format(completions, match_response_cls):
     completion = completions.parse(
         model="gpt-4o-2024-08-06",
         messages=[
             {"role": "system", "content": "You are a helpful math tutor."},
             {"role": "user", "content": "solve 8x + 31 = 2"},
         ],
-        response_format=MathResponse,
+        response_format=match_response_cls,
     )
 
     message = completion.choices[0].message
@@ -112,4 +112,5 @@ def test_response_format(completions, MathResponse):
         ic(message.refusal)
 
 
+ic("New test")
 test_response_format(completions, MathResponse)
