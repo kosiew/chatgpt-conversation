@@ -70,6 +70,9 @@ class Triage(BaseModel):
     agents: list[Agent]
     query: str
 
+    class Config:
+        extra = "forbid"  # Ensure no additional properties are allowed
+
 
 preprocess_tools = [
     {
