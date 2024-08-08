@@ -155,6 +155,11 @@ analysis_tools = [
 
 
 class StatAnalysisTool(BaseModel):
+    """Peforms statistical analysis on the given dataset.
+    Args:
+        BaseModel (_type_): _description_
+    """
+
     data: str
 
     class Config:
@@ -162,6 +167,12 @@ class StatAnalysisTool(BaseModel):
 
 
 class CorrelationAnalysisTool(BaseModel):
+    """Calculates correlation coefficients between variables in the dataset.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
     data: str
     variables: list[str]
 
@@ -170,6 +181,12 @@ class CorrelationAnalysisTool(BaseModel):
 
 
 class RegressionAnalysisTool(BaseModel):
+    """Performs regression analysis on the dataset.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
     data: str
     dependent_var: str
     independent_vars: list[str]
