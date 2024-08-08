@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union
+from typing import List, Union
 
 import openai
 from icecream import ic
@@ -108,7 +108,7 @@ def test_response_format(messages, completions, match_response_cls):
         ic(message.refusal)
 
 
-ic("New test")
+ic("test Chain of Thought")
 messages = [
     {"role": "system", "content": "You are a helpful math tutor."},
     {"role": "user", "content": "solve 8x + 31 = 2"},
@@ -122,7 +122,7 @@ class CalendarEvent(BaseModel):
     participants: list[str]
 
 
-ic("test event")
+ic("test extract event information")
 messages = [
     {"role": "system", "content": "Extract the event information."},
     {
@@ -131,3 +131,42 @@ messages = [
     },
 ]
 test_response_format(messages, completions, CalendarEvent)
+
+
+class UIType(str, Enum):
+    div = "div"
+    button = "button"
+    header = "header"
+    section = "section"
+    field = "field"
+    form = "form"
+
+
+class Attribute(BaseModel):
+    name: str
+    value: str
+
+
+class UI(BaseModel):
+    type: UIType
+    label: str
+    children: List["UI"]
+    attributes: List[Attribute]
+
+
+UI.model_rebuild()  # This is required to enable recursive types
+
+
+class Response(BaseModel):
+    ui: UI
+
+
+messages = [
+    {
+        "role": "system",
+        "content": "You are a UI generator AI. Convert the user input into a UI.",
+    },
+    {"role": "user", "content": "Make a User Profile Form"},
+]
+ic("test UI generation")
+test_response_format(messages, completions, Response)
