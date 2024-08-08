@@ -500,7 +500,7 @@ def handle_user_message(user_query, conversation_messages=[]):
     for tool_call in completion.choices[0].message.tool_calls:
         function_name = tool_call.function.name
         ic(function_name)
-        if function_name == "send_query_to_agents":
+        if function_name == "Triage":
             agents = json.loads(tool_call.function.arguments)["agents"]
             query = json.loads(tool_call.function.arguments)["query"]
             ic(agents, query)
