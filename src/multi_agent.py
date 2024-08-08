@@ -34,32 +34,6 @@ visualization_system_prompt = """You are a Visualization Agent. Your role is to 
 - create_line_chart
 - create_pie_chart"""
 
-triage_tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "send_query_to_agents",
-            "description": "Sends the user query to relevant agents based on their capabilities.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "agents": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "An array of agent names to send the query to.",
-                    },
-                    "query": {
-                        "type": "string",
-                        "description": "The user query to send.",
-                    },
-                },
-                "required": ["agents", "query"],
-            },
-        },
-        "strict": True,
-    }
-]
-
 
 class Agent(str, Enum):
     Data_Processing = "Data Processing Agent"
@@ -73,80 +47,6 @@ class Triage(BaseModel):
 
     class Config:
         extra = "forbid"  # Ensure no additional properties are allowed
-
-
-preprocess_tools = [
-    {
-        "type": "function",
-        "function": {
-            "name": "clean_data",
-            "description": "Cleans the provided data by removing duplicates and handling missing values.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "data": {
-                        "type": "string",
-                        "description": "The dataset to clean. Should be in a suitable format such as JSON or CSV.",
-                    }
-                },
-                "required": ["data"],
-                "additionalProperties": False,
-            },
-        },
-        "strict": True,
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "transform_data",
-            "description": "Transforms data based on specified rules.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "data": {
-                        "type": "string",
-                        "description": "The data to transform. Should be in a suitable format such as JSON or CSV.",
-                    },
-                    "rules": {
-                        "type": "string",
-                        "description": "Transformation rules to apply, specified in a structured format.",
-                    },
-                },
-                "required": ["data", "rules"],
-                "additionalProperties": False,
-            },
-        },
-        "strict": True,
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "aggregate_data",
-            "description": "Aggregates data by specified columns and operations.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "data": {
-                        "type": "string",
-                        "description": "The data to aggregate. Should be in a suitable format such as JSON or CSV.",
-                    },
-                    "group_by": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Columns to group by.",
-                    },
-                    "operations": {
-                        "type": "string",
-                        "description": "Aggregation operations to perform, specified in a structured format.",
-                    },
-                },
-                "required": ["data", "group_by", "operations"],
-                "additionalProperties": False,
-            },
-        },
-        "strict": True,
-    },
-]
 
 
 class CleanDataTool(BaseModel):
