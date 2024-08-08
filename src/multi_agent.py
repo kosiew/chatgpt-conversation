@@ -50,6 +50,7 @@ class TriageTool(BaseModel):
         extra = "forbid"  # Ensure no additional properties are allowed
 
 
+# Preprocessing tools
 class CleanDataTool(BaseModel):
     """Cleans the provided data by removing duplicates and handling missing values."""
 
@@ -80,6 +81,7 @@ class AggregateDataTool(BaseModel):
         extra = "forbid"
 
 
+# Analysis tools
 class StatAnalysisTool(BaseModel):
     """Peforms statistical analysis on the given dataset.
     Args:
@@ -121,6 +123,7 @@ class RegressionAnalysisTool(BaseModel):
         extra = "forbid"
 
 
+# Visualization tools
 class CreateBarChartTool(BaseModel):
     """Creates a bar chart from the provided data.
 
@@ -384,7 +387,7 @@ def handle_user_message(user_query, conversation_messages=[]):
         function_name = tool_call.function.name
         function_arguments = tool_call.function.arguments
         ic(function_name, function_arguments)
-        if function_name == "Triage":
+        if function_name == "TriageTool":
             agents = json.loads(tool_call.function.arguments)["agents"]
             query = json.loads(tool_call.function.arguments)["query"]
             ic(agents, query)
