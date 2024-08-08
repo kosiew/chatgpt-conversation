@@ -1,11 +1,12 @@
 import json
+from enum import Enum
 from io import StringIO
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from IPython.display import Image
-from openai import OpenAI
+from openai import BaseModel, OpenAI, pydantic_function_tool
 
 client = OpenAI()
 MODEL = "gpt-4o-2024-08-06"
@@ -57,6 +58,18 @@ triage_tools = [
         "strict": True,
     }
 ]
+
+
+class Agent(str, Enum):
+    Data_Processing = "Data Processing Agent"
+    Analysis = "Analysis Agent"
+    Visualization = "Visualization Agent"
+
+
+class Triage(BaseModel):
+    agents: list[Agent]
+    query: str
+
 
 preprocess_tools = [
     {
@@ -466,18 +479,18 @@ def handle_user_message(user_query, conversation_messages=[]):
     messages = [{"role": "system", "content": triaging_system_prompt}]
     messages.extend(conversation_messages)
 
-    response = client.chat.completions.create(
+    completion = client.beta.chat.completions.parse(
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=triage_tools,
+        tools=[pydantic_function_tool(Triage)],
     )
 
     conversation_messages.append(
-        [tool_call.function for tool_call in response.choices[0].message.tool_calls]
+        [tool_call.function for tool_call in completion.choices[0].message.tool_calls]
     )
 
-    for tool_call in response.choices[0].message.tool_calls:
+    for tool_call in completion.choices[0].message.tool_calls:
         if tool_call.function.name == "send_query_to_agents":
             agents = json.loads(tool_call.function.arguments)["agents"]
             query = json.loads(tool_call.function.arguments)["query"]
