@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Union
 
 import openai
+from icecream import ic
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -55,8 +56,9 @@ class Query(BaseModel):
 
 client = OpenAI()
 
+completions = client.beta.chat.completions
 
-completion = client.beta.chat.completions.parse(
+completion = completions.parse(
     model="gpt-4o-2024-08-06",
     messages=[
         {
@@ -73,4 +75,5 @@ completion = client.beta.chat.completions.parse(
     ],
 )
 
-print(completion.choices[0].message.tool_calls[0].function.parsed_arguments)
+parsed_arguments = completion.choices[0].message.tool_calls[0].function.parsed_arguments
+ic(parsed_arguments)
