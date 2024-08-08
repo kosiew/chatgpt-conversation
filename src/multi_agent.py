@@ -32,7 +32,8 @@ analysis_system_prompt = """You are an Analysis Agent. Your role is to perform s
 visualization_system_prompt = """You are a Visualization Agent. Your role is to create bar charts, line charts, and pie charts using the following tools:
 - CreateBarChartTool
 - CreateLineChartTool
-- CreatePieChartTool """
+- CreatePieChartTool
+"""
 
 
 class Agent(str, Enum):
@@ -41,7 +42,7 @@ class Agent(str, Enum):
     Visualization = "Visualization Agent"
 
 
-class Triage(BaseModel):
+class TriageTool(BaseModel):
     agents: list[Agent]
     query: str
 
@@ -370,7 +371,7 @@ def handle_user_message(user_query, conversation_messages=[]):
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=[pydantic_function_tool(Triage)],
+        tools=[pydantic_function_tool(TriageTool)],
     )
 
     tool_calls = completion.choices[0].message.tool_calls
