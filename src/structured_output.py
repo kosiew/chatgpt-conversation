@@ -59,19 +59,10 @@ client = OpenAI()
 completions = client.beta.chat.completions
 
 
-def test_tools(query_cls, completions):
+def test_tools(messages, query_cls, completions):
     completion = completions.parse(
         model="gpt-4o-2024-08-06",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful assistant. The current date is August 6, 2024. You help users query for the data they are looking for by calling the query function.",
-            },
-            {
-                "role": "user",
-                "content": "look up all my orders in may of last year that were fulfilled but not delivered on time",
-            },
-        ],
+        messages=messages,
         tools=[
             openai.pydantic_function_tool(query_cls),
         ],
@@ -81,7 +72,17 @@ def test_tools(query_cls, completions):
     ic(parsed_arguments)
 
 
-test_tools(Query, completions)
+messages = [
+    {
+        "role": "system",
+        "content": "You are a helpful assistant. The current date is August 6, 2024. You help users query for the data they are looking for by calling the query function.",
+    },
+    {
+        "role": "user",
+        "content": "look up all my orders in may of last year that were fulfilled but not delivered on time",
+    },
+]
+test_tools(messages, Query, completions)
 
 
 class Step(BaseModel):
