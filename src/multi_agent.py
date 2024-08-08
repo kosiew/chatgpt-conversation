@@ -20,19 +20,19 @@ triaging_system_prompt = """You are a Triaging Agent. Your role is to assess the
 Use the send_query_to_agents tool to forward the user's query to the relevant agents. Also, use the speak_to_user tool to get more information from the user if needed."""
 
 processing_system_prompt = """You are a Data Processing Agent. Your role is to clean, transform, and aggregate data using the following tools:
-- clean_data
-- transform_data
-- aggregate_data"""
+- CleanDataTool
+- TransformDataTool
+- AggregateDataTool"""
 
 analysis_system_prompt = """You are an Analysis Agent. Your role is to perform statistical, correlation, and regression analysis using the following tools:
-- stat_analysis
-- correlation_analysis
-- regression_analysis"""
+- StatAnalysisTool
+- CorrelationAnalysisTool
+- RegressionAnalysisTool"""
 
 visualization_system_prompt = """You are a Visualization Agent. Your role is to create bar charts, line charts, and pie charts using the following tools:
-- create_bar_chart
-- create_line_chart
-- create_pie_chart"""
+- CreateBarChartTool
+- CreateLineChartTool
+- CreatePieChartTool """
 
 
 class Agent(str, Enum):
