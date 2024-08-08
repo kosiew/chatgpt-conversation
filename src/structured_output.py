@@ -56,7 +56,12 @@ class Query(BaseModel):
 
 client = OpenAI()
 
-completions = client.beta.chat.completions
+
+def get_completions():
+    return client.beta.chat.completions
+
+
+completions = get_completions()
 
 
 def test_tools(messages, tools_cls, completions):
@@ -69,7 +74,7 @@ def test_tools(messages, tools_cls, completions):
     )
 
     parsed_arguments = completion.choices[0].message.tool_calls[0].function.parsed_arguments  # type: ignore
-    ic(parsed_arguments)
+    return ic(parsed_arguments)
 
 
 messages = [
@@ -104,9 +109,9 @@ def test_response_format(messages, completions, match_response_cls):
 
     message = completion.choices[0].message
     if message.parsed:
-        ic(message.parsed)
+        return ic(message.parsed)
     else:
-        ic(message.refusal)
+        return ic(message.refusal)
 
 
 ic("test Chain of Thought")
