@@ -75,5 +75,5 @@ completion = completions.parse(
     ],
 )
 
-parsed_arguments = completion.choices[0].message.tool_calls[0].function.parsed_arguments
+parsed_arguments = completion.choices[0].message.tool_calls[0].function.parsed_arguments  # type: ignore
 ic(parsed_arguments)
