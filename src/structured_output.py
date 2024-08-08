@@ -59,12 +59,12 @@ client = OpenAI()
 completions = client.beta.chat.completions
 
 
-def test_tools(messages, query_cls, completions):
+def test_tools(messages, tools_cls, completions):
     completion = completions.parse(
         model="gpt-4o-2024-08-06",
         messages=messages,
         tools=[
-            openai.pydantic_function_tool(query_cls),
+            openai.pydantic_function_tool(tools_cls),
         ],
     )
 
