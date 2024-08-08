@@ -59,7 +59,7 @@ client = OpenAI()
 completions = client.beta.chat.completions
 
 
-def test_query(query_cls, completions):
+def test_tools(query_cls, completions):
     completion = completions.parse(
         model="gpt-4o-2024-08-06",
         messages=[
@@ -81,4 +81,31 @@ def test_query(query_cls, completions):
     ic(parsed_arguments)
 
 
-test_query(Query, completions)
+test_tools(Query, completions)
+
+
+class Step(BaseModel):
+    explanation: str
+    output: str
+
+
+class MathResponse(BaseModel):
+    steps: list[Step]
+    final_answer: str
+
+
+completion = completions.parse(
+    model="gpt-4o-2024-08-06",
+    messages=[
+        {"role": "system", "content": "You are a helpful math tutor."},
+        {"role": "user", "content": "solve 8x + 31 = 2"},
+    ],
+    response_format=MathResponse,
+)
+
+message = completion.choices[0].message
+if message.parsed:
+    print(message.parsed.steps)
+    print(message.parsed.final_answer)
+else:
+    print(message.refusal)
