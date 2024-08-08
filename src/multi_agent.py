@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 from io import StringIO
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -67,9 +68,27 @@ class Agent(str, Enum):
     Visualization = "Visualization Agent"
 
 
-class Triage(BaseModel):
-    agents: list[Agent]
+class SendQueryToAgentsParameters(BaseModel):
+    agents: List[Agent]
     query: str
+
+    class Config:
+        extra = "forbid"  # Ensure no additional properties are allowed
+
+
+class SendQueryToAgentsFunction(BaseModel):
+    name: str
+    description: str
+    parameters: SendQueryToAgentsParameters
+
+    class Config:
+        extra = "forbid"  # Ensure no additional properties are allowed
+
+
+class TriageTool(BaseModel):
+    type: str
+    function: SendQueryToAgentsFunction
+    strict: bool
 
     class Config:
         extra = "forbid"  # Ensure no additional properties are allowed
@@ -487,20 +506,15 @@ def handle_user_message(user_query, conversation_messages=[]):
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=[pydantic_function_tool(Triage)],
+        tools=[pydantic_function_tool(TriageTool)],
     )
 
     conversation_messages.append(
         [tool_call.function for tool_call in completion.choices[0].message.tool_calls]
     )
 
-    # print number of tool_calls
-    ic(len(completion.choices[0].message.tool_calls))
-
     for tool_call in completion.choices[0].message.tool_calls:
-        function_name = tool_call.function.name
-        ic(function_name)
-        if function_name == "send_query_to_agents":
+        if tool_call.function.name == "send_query_to_agents":
             agents = json.loads(tool_call.function.arguments)["agents"]
             query = json.loads(tool_call.function.arguments)["query"]
             ic(agents, query)
