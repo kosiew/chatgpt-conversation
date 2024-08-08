@@ -149,6 +149,36 @@ preprocess_tools = [
 ]
 
 
+class CleanDataTool(BaseModel):
+    """Cleans the provided data by removing duplicates and handling missing values."""
+
+    data: str
+
+    class Config:
+        extra = "forbid"
+
+
+class TransformDataTool(BaseModel):
+    """Transforms data based on specified rules."""
+
+    data: str
+    rules: str
+
+    class Config:
+        extra = "forbid"
+
+
+class AggregateDataTool(BaseModel):
+    """Aggregates data by specified columns and operations."""
+
+    data: str
+    group_by: list[str]
+    operations: str
+
+    class Config:
+        extra = "forbid"
+
+
 analysis_tools = [
     {
         "type": "function",
@@ -348,8 +378,9 @@ def execute_tool(tool_calls, messages):
     for tool_call in tool_calls:
         tool_name = tool_call.function.name
         tool_arguments = json.loads(tool_call.function.arguments)
+        ic(tool_name, tool_arguments)
 
-        if tool_name == "clean_data":
+        if tool_name == "CleanDataTool":
             # Simulate data cleaning
             cleaned_df = clean_data(tool_arguments["data"])
             cleaned_data = {"cleaned_data": cleaned_df.to_dict()}
@@ -357,7 +388,7 @@ def execute_tool(tool_calls, messages):
                 {"role": "tool", "name": tool_name, "content": json.dumps(cleaned_data)}
             )
             print("Cleaned data: ", cleaned_df)
-        elif tool_name == "transform_data":
+        elif tool_name == "TransformDataTool":
             # Simulate data transformation
             transformed_data = {"transformed_data": "sample_transformed_data"}
             messages.append(
@@ -367,7 +398,7 @@ def execute_tool(tool_calls, messages):
                     "content": json.dumps(transformed_data),
                 }
             )
-        elif tool_name == "aggregate_data":
+        elif tool_name == "AggregateDataTool":
             # Simulate data aggregation
             aggregated_data = {"aggregated_data": "sample_aggregated_data"}
             messages.append(
@@ -432,7 +463,11 @@ def handle_data_processing_agent(query, conversation_messages):
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=preprocess_tools,
+        tools=[
+            pydantic_function_tool(CleanDataTool),
+            pydantic_function_tool(TransformDataTool),
+            pydantic_function_tool(AggregateDataTool),
+        ],
     )
 
     conversation_messages.append(
