@@ -192,6 +192,52 @@ visualization_tools = [
     },
 ]
 
+
+class CreateBarChartTool(BaseModel):
+    """Creates a bar chart from the provided data.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
+    data: str
+    x: str
+    y: str
+
+    class Config:
+        extra = "forbid"
+
+
+class CreateLineChartTool(BaseModel):
+    """Creates a line chart from the provided data.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
+    data: str
+    x: str
+    y: str
+
+    class Config:
+        extra = "forbid"
+
+
+class CreatePieChartTool(BaseModel):
+    """Creates a pie chart from the provided data.
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+
+    data: str
+    labels: str
+    values: str
+
+    class Config:
+        extra = "forbid"
+
+
 # Example query
 
 user_query = """
@@ -299,20 +345,20 @@ def execute_tool(tool_calls, messages):
                     "content": json.dumps(regression_results),
                 }
             )
-        elif tool_name == "create_bar_chart":
+        elif tool_name == "CreateBarChartTool":
             # Simulate bar chart creation
             bar_chart = {"bar_chart": "sample_bar_chart"}
             messages.append(
                 {"role": "tool", "name": tool_name, "content": json.dumps(bar_chart)}
             )
-        elif tool_name == "create_line_chart":
+        elif tool_name == "CreateLineChartTool":
             # Simulate line chart creation
             line_chart = {"line_chart": "sample_line_chart"}
             messages.append(
                 {"role": "tool", "name": tool_name, "content": json.dumps(line_chart)}
             )
             plot_line_chart(tool_arguments["data"])
-        elif tool_name == "create_pie_chart":
+        elif tool_name == "CreatePieChartTool":
             # Simulate pie chart creation
             pie_chart = {"pie_chart": "sample_pie_chart"}
             messages.append(
@@ -372,7 +418,11 @@ def handle_visualization_agent(query, conversation_messages):
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=visualization_tools,
+        tools=[
+            pydantic_function_tool(CreateBarChartTool),
+            pydantic_function_tool(CreateLineChartTool),
+            pydantic_function_tool(CreatePieChartTool),
+        ],
     )
 
     conversation_messages.append(
