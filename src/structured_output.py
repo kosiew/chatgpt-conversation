@@ -94,23 +94,40 @@ class MathResponse(BaseModel):
     final_answer: str
 
 
-def test_response_format(completions, match_response_cls):
+def test_response_format(messages, completions, match_response_cls):
     completion = completions.parse(
         model="gpt-4o-2024-08-06",
-        messages=[
-            {"role": "system", "content": "You are a helpful math tutor."},
-            {"role": "user", "content": "solve 8x + 31 = 2"},
-        ],
+        messages=messages,
         response_format=match_response_cls,
     )
 
     message = completion.choices[0].message
     if message.parsed:
-        ic(message.parsed.steps)
-        ic(message.parsed.final_answer)
+        ic(message.parsed)
     else:
         ic(message.refusal)
 
 
 ic("New test")
-test_response_format(completions, MathResponse)
+messages = [
+    {"role": "system", "content": "You are a helpful math tutor."},
+    {"role": "user", "content": "solve 8x + 31 = 2"},
+]
+test_response_format(messages, completions, MathResponse)
+
+
+class CalendarEvent(BaseModel):
+    name: str
+    date: str
+    participants: list[str]
+
+
+ic("test event")
+messages = [
+    {"role": "system", "content": "Extract the event information."},
+    {
+        "role": "user",
+        "content": "Alice and Bob are going to a science fair on Friday.",
+    },
+]
+test_response_format(messages, completions, CalendarEvent)
