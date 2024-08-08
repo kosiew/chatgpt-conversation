@@ -298,68 +298,50 @@ def execute_tool(tool_calls, messages):
     return messages
 
 
-# Define the functions to handle each agent's processing
-def handle_data_processing_agent(query, conversation_messages):
-    messages = [{"role": "system", "content": processing_system_prompt}]
+# Define a helper function to handle agent processing
+def handle_agent(query, conversation_messages, system_prompt, tools):
+    messages = [{"role": "system", "content": system_prompt}]
     messages.append({"role": "user", "content": query})
 
     response = client.chat.completions.create(
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=[
-            pydantic_function_tool(CleanDataTool),
-            pydantic_function_tool(TransformDataTool),
-            pydantic_function_tool(AggregateDataTool),
-        ],
+        tools=[pydantic_function_tool(tool) for tool in tools],
     )
 
     conversation_messages.append(
         [tool_call.function for tool_call in response.choices[0].message.tool_calls]
     )
     execute_tool(response.choices[0].message.tool_calls, conversation_messages)
+
+
+# Define the functions to handle each agent's processing
+def handle_data_processing_agent(query, conversation_messages):
+    handle_agent(
+        query,
+        conversation_messages,
+        processing_system_prompt,
+        [CleanDataTool, TransformDataTool, AggregateDataTool],
+    )
 
 
 def handle_analysis_agent(query, conversation_messages):
-    messages = [{"role": "system", "content": analysis_system_prompt}]
-    messages.append({"role": "user", "content": query})
-
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=messages,
-        temperature=0,
-        tools=[
-            pydantic_function_tool(StatAnalysisTool),
-            pydantic_function_tool(CorrelationAnalysisTool),
-            pydantic_function_tool(RegressionAnalysisTool),
-        ],
+    handle_agent(
+        query,
+        conversation_messages,
+        analysis_system_prompt,
+        [StatAnalysisTool, CorrelationAnalysisTool, RegressionAnalysisTool],
     )
-
-    conversation_messages.append(
-        [tool_call.function for tool_call in response.choices[0].message.tool_calls]
-    )
-    execute_tool(response.choices[0].message.tool_calls, conversation_messages)
 
 
 def handle_visualization_agent(query, conversation_messages):
-    messages = [{"role": "system", "content": visualization_system_prompt}]
-    messages.append({"role": "user", "content": query})
-
-    response = client.chat.completions.create(
-        model=MODEL,
-        messages=messages,
-        temperature=0,
-        tools=[
-            pydantic_function_tool(CreateBarChartTool),
-            pydantic_function_tool(CreateLineChartTool),
-            pydantic_function_tool(CreatePieChartTool),
-        ],
+    handle_agent(
+        query,
+        conversation_messages,
+        visualization_system_prompt,
+        [CreateBarChartTool, CreateLineChartTool, CreatePieChartTool],
     )
-
-    conversation_messages.append(
-        [tool_call.function for tool_call in response.choices[0].message.tool_calls]
-    )
-    execute_tool(response.choices[0].message.tool_calls, conversation_messages)
 
 
 # Function to handle user input and triaging
