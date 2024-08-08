@@ -490,16 +490,16 @@ def handle_user_message(user_query, conversation_messages=[]):
         tools=[pydantic_function_tool(Triage)],
     )
 
-    conversation_messages.append(
-        [tool_call.function for tool_call in completion.choices[0].message.tool_calls]
-    )
+    tool_calls = completion.choices[0].message.tool_calls
+    conversation_messages.append([tool_call.function for tool_call in tool_calls])
 
     # print number of tool_calls
-    ic(len(completion.choices[0].message.tool_calls))
+    ic(len(tool_calls))
 
-    for tool_call in completion.choices[0].message.tool_calls:
+    for tool_call in tool_calls:
         function_name = tool_call.function.name
-        ic(function_name)
+        function_arguments = tool_call.function.arguments
+        ic(function_name, function_arguments)
         if function_name == "Triage":
             agents = json.loads(tool_call.function.arguments)["agents"]
             query = json.loads(tool_call.function.arguments)["query"]
