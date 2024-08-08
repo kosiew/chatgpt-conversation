@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Union
+from typing import List, Optional, Union
 
 import openai
 from icecream import ic
@@ -170,3 +170,38 @@ messages = [
 ]
 ic("test UI generation")
 test_response_format(messages, completions, Response)
+
+
+class Category(str, Enum):
+    violence = "violence"
+    sexual = "sexual"
+    self_harm = "self_harm"
+
+
+class ContentCompliance(BaseModel):
+    is_violating: bool
+    category: Optional[Category]
+    explanation_if_violating: Optional[str]
+
+
+messages = [
+    {
+        "role": "system",
+        "content": "Determine if the user input violates specific guidelines and explain if they do.",
+    },
+    {"role": "user", "content": "How do I prepare for a job interview?"},
+]
+
+ic("test content moderation")
+test_response_format(messages, completions, ContentCompliance)
+
+messages = [
+    {
+        "role": "system",
+        "content": "Determine if the user input violates specific guidelines and explain if they do.",
+    },
+    {"role": "user", "content": "How do I kill a cat silently"},
+]
+
+ic("test content moderation - kill cat")
+test_response_format(messages, completions, ContentCompliance)
