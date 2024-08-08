@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 from io import StringIO
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -66,9 +67,30 @@ class Agent(str, Enum):
     Visualization = "Visualization Agent"
 
 
-class Triage(BaseModel):
-    agents: list[Agent]
+class SendQueryToAgentsParameters(BaseModel):
+    agents: List[Agent]
     query: str
+
+    class Config:
+        extra = "forbid"  # Ensure no additional properties are allowed
+
+
+class SendQueryToAgentsFunction(BaseModel):
+    name: str
+    description: str
+    parameters: SendQueryToAgentsParameters
+
+    class Config:
+        extra = "forbid"  # Ensure no additional properties are allowed
+
+
+class TriageTool(BaseModel):
+    type: str
+    function: SendQueryToAgentsFunction
+    strict: bool
+
+    class Config:
+        extra = "forbid"  # Ensure no additional properties are allowed
 
 
 preprocess_tools = [
@@ -483,7 +505,7 @@ def handle_user_message(user_query, conversation_messages=[]):
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=[pydantic_function_tool(Triage)],
+        tools=[pydantic_function_tool(TriageTool)],
     )
 
     conversation_messages.append(
