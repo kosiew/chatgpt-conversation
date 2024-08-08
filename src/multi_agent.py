@@ -153,6 +153,31 @@ analysis_tools = [
     },
 ]
 
+
+class StatAnalysisTool(BaseModel):
+    data: str
+
+    class Config:
+        extra = "forbid"
+
+
+class CorrelationAnalysisTool(BaseModel):
+    data: str
+    variables: list[str]
+
+    class Config:
+        extra = "forbid"
+
+
+class RegressionAnalysisTool(BaseModel):
+    data: str
+    dependent_var: str
+    independent_vars: list[str]
+
+    class Config:
+        extra = "forbid"
+
+
 visualization_tools = [
     {
         "type": "function",
@@ -308,7 +333,7 @@ def execute_tool(tool_calls, messages):
                     "content": json.dumps(aggregated_data),
                 }
             )
-        elif tool_name == "stat_analysis":
+        elif tool_name == "StatAnalysisTool":
             # Simulate statistical analysis
             stats_df = stat_analysis(tool_arguments["data"])
             stats = {"stats": stats_df.to_dict()}
@@ -316,13 +341,13 @@ def execute_tool(tool_calls, messages):
                 {"role": "tool", "name": tool_name, "content": json.dumps(stats)}
             )
             print("Statistical Analysis: ", stats_df)
-        elif tool_name == "correlation_analysis":
+        elif tool_name == "CorrelationAnalysisTool":
             # Simulate correlation analysis
             correlations = {"correlations": "sample_correlations"}
             messages.append(
                 {"role": "tool", "name": tool_name, "content": json.dumps(correlations)}
             )
-        elif tool_name == "regression_analysis":
+        elif tool_name == "RegressionAnalysisTool":
             # Simulate regression analysis
             regression_results = {"regression_results": "sample_regression_results"}
             messages.append(
@@ -384,7 +409,11 @@ def handle_analysis_agent(query, conversation_messages):
         model=MODEL,
         messages=messages,
         temperature=0,
-        tools=analysis_tools,
+        tools=[
+            pydantic_function_tool(StatAnalysisTool),
+            pydantic_function_tool(CorrelationAnalysisTool),
+            pydantic_function_tool(RegressionAnalysisTool),
+        ],
     )
 
     conversation_messages.append(
