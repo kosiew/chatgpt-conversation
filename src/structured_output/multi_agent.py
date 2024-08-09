@@ -167,16 +167,18 @@ Below is some data. I want you to perform these steps:
 3. plot a line chart on the deduplicated data.
 
 house_size (m3), house_price ($)
-90, 100
 80, 90
+80, 90
+80, 90
+90, 100
+90, 100
 100, 120
-90, 100
-80, 90
+100, 120
 100, 120
 85, 95
 70, 80
 70, 80
-100, 120
+70, 80
 """
 
 
