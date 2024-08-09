@@ -2,9 +2,8 @@ from enum import Enum
 from typing import List
 
 from icecream import ic
+from main import completions, test_response_format
 from pydantic import BaseModel
-
-from structured_output.main import completions, test_response_format
 
 
 class UIType(str, Enum):

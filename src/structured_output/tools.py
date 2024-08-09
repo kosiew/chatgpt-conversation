@@ -2,9 +2,8 @@ from enum import Enum
 from typing import Union
 
 from icecream import ic
+from main import completions, test_tools
 from pydantic import BaseModel
-
-from structured_output.structured_output import completions, test_tools
 
 
 class Table(str, Enum):
