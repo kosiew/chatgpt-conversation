@@ -46,7 +46,12 @@ class Agent(str, Enum):
     Visualization = "Visualization Agent"
 
 
-class TriageTool(BaseModel):
+class BaseTool(BaseModel):
+    class Config:
+        extra = "forbid"
+
+
+class TriageTool(BaseTool):
     agents: list[Agent] = Field(
         ..., description="The list of agents to route the query to."
     )
@@ -54,7 +59,6 @@ class TriageTool(BaseModel):
 
     class Config:
         description = "Routes the user's query to the relevant agents for processing."
-        extra = "forbid"  # Ensure no additional properties are allowed
 
 
 class SpeakToUserTool(BaseModel):
