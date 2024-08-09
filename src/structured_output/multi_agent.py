@@ -97,13 +97,12 @@ class AggregateDataTool(BaseTool):
 
 
 # Analysis tools
-class StatAnalysisTool(BaseModel):
+class StatAnalysisTool(BaseTool):
 
     data: str = Field(..., description="The input data for statistical analysis.")
 
     class Config:
         description = "Performs statistical analysis on the provided dataset."
-        extra = "forbid"
 
 
 class CorrelationAnalysisTool(BaseModel):
