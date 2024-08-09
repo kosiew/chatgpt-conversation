@@ -61,12 +61,11 @@ class TriageTool(BaseTool):
         description = "Routes the user's query to the relevant agents for processing."
 
 
-class SpeakToUserTool(BaseModel):
+class SpeakToUserTool(BaseTool):
     message: str = Field(..., description="The message to speak to the user.")
 
     class Config:
         description = "Sends a message to the user to request more information."
-        extra = "forbid"
 
 
 # Preprocessing tools
