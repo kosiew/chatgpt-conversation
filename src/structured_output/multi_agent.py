@@ -217,84 +217,125 @@ def plot_line_chart(data):
     plt.show()
 
 
-# Define the function to execute the tools
+# Tool functions used in execute_tools
+
+
+def clean_data_tool(arguments, messages):
+    cleaned_df = clean_data(arguments["data"])
+    cleaned_data = {"cleaned_data": cleaned_df.to_dict()}
+    messages.append(
+        {"role": "tool", "name": "CleanDataTool", "content": json.dumps(cleaned_data)}
+    )
+    print("Cleaned data: ", cleaned_df)
+
+
+def transform_data_tool(arguments, messages):
+    transformed_data = {"transformed_data": "sample_transformed_data"}
+    messages.append(
+        {
+            "role": "tool",
+            "name": "TransformDataTool",
+            "content": json.dumps(transformed_data),
+        }
+    )
+
+
+def aggregate_data_tool(arguments, messages):
+    aggregated_data = {"aggregated_data": "sample_aggregated_data"}
+    messages.append(
+        {
+            "role": "tool",
+            "name": "AggregateDataTool",
+            "content": json.dumps(aggregated_data),
+        }
+    )
+
+
+def stat_analysis_tool(arguments, messages):
+    stats_df = stat_analysis(arguments["data"])
+    stats = {"stats": stats_df.to_dict()}
+    messages.append(
+        {"role": "tool", "name": "StatAnalysisTool", "content": json.dumps(stats)}
+    )
+    print("Statistical Analysis: ", stats_df)
+
+
+def correlation_analysis_tool(arguments, messages):
+    correlations = {"correlations": "sample_correlations"}
+    messages.append(
+        {
+            "role": "tool",
+            "name": "CorrelationAnalysisTool",
+            "content": json.dumps(correlations),
+        }
+    )
+
+
+def regression_analysis_tool(arguments, messages):
+    regression_results = {"regression_results": "sample_regression_results"}
+    messages.append(
+        {
+            "role": "tool",
+            "name": "RegressionAnalysisTool",
+            "content": json.dumps(regression_results),
+        }
+    )
+
+
+def create_bar_chart_tool(arguments, messages):
+    bar_chart = {"bar_chart": "sample_bar_chart"}
+    messages.append(
+        {"role": "tool", "name": "CreateBarChartTool", "content": json.dumps(bar_chart)}
+    )
+
+
+def create_line_chart_tool(arguments, messages):
+    line_chart = {"line_chart": "sample_line_chart"}
+    messages.append(
+        {
+            "role": "tool",
+            "name": "CreateLineChartTool",
+            "content": json.dumps(line_chart),
+        }
+    )
+    plot_line_chart(arguments["data"])
+
+
+def create_pie_chart_tool(arguments, messages):
+    pie_chart = {"pie_chart": "sample_pie_chart"}
+    messages.append(
+        {"role": "tool", "name": "CreatePieChartTool", "content": json.dumps(pie_chart)}
+    )
+
+
+tool_functions = {
+    "CleanDataTool": clean_data_tool,
+    "TransformDataTool": transform_data_tool,
+    "AggregateDataTool": aggregate_data_tool,
+    "StatAnalysisTool": stat_analysis_tool,
+    "CorrelationAnalysisTool": correlation_analysis_tool,
+    "RegressionAnalysisTool": regression_analysis_tool,
+    "CreateBarChartTool": create_bar_chart_tool,
+    "CreateLineChartTool": create_line_chart_tool,
+    "CreatePieChartTool": create_pie_chart_tool,
+}
+
+
+def handle_tool(tool_name, tool_arguments, messages):
+    if tool_name in tool_functions:
+        tool_functions[tool_name](tool_arguments, messages)
+    else:
+        ic(f"Unknown tool: {tool_name}")
+
+
+# invoke the function to execute the tools
 def execute_tool(tool_calls, messages):
     for tool_call in tool_calls:
         tool_name = tool_call.function.name
         tool_arguments = json.loads(tool_call.function.arguments)
         ic(tool_name, tool_arguments)
+        handle_tool(tool_name, tool_arguments, messages)
 
-        if tool_name == "CleanDataTool":
-            # Simulate data cleaning
-            cleaned_df = clean_data(tool_arguments["data"])
-            cleaned_data = {"cleaned_data": cleaned_df.to_dict()}
-            messages.append(
-                {"role": "tool", "name": tool_name, "content": json.dumps(cleaned_data)}
-            )
-            print("Cleaned data: ", cleaned_df)
-        elif tool_name == "TransformDataTool":
-            # Simulate data transformation
-            transformed_data = {"transformed_data": "sample_transformed_data"}
-            messages.append(
-                {
-                    "role": "tool",
-                    "name": tool_name,
-                    "content": json.dumps(transformed_data),
-                }
-            )
-        elif tool_name == "AggregateDataTool":
-            # Simulate data aggregation
-            aggregated_data = {"aggregated_data": "sample_aggregated_data"}
-            messages.append(
-                {
-                    "role": "tool",
-                    "name": tool_name,
-                    "content": json.dumps(aggregated_data),
-                }
-            )
-        elif tool_name == "StatAnalysisTool":
-            # Simulate statistical analysis
-            stats_df = stat_analysis(tool_arguments["data"])
-            stats = {"stats": stats_df.to_dict()}
-            messages.append(
-                {"role": "tool", "name": tool_name, "content": json.dumps(stats)}
-            )
-            print("Statistical Analysis: ", stats_df)
-        elif tool_name == "CorrelationAnalysisTool":
-            # Simulate correlation analysis
-            correlations = {"correlations": "sample_correlations"}
-            messages.append(
-                {"role": "tool", "name": tool_name, "content": json.dumps(correlations)}
-            )
-        elif tool_name == "RegressionAnalysisTool":
-            # Simulate regression analysis
-            regression_results = {"regression_results": "sample_regression_results"}
-            messages.append(
-                {
-                    "role": "tool",
-                    "name": tool_name,
-                    "content": json.dumps(regression_results),
-                }
-            )
-        elif tool_name == "CreateBarChartTool":
-            # Simulate bar chart creation
-            bar_chart = {"bar_chart": "sample_bar_chart"}
-            messages.append(
-                {"role": "tool", "name": tool_name, "content": json.dumps(bar_chart)}
-            )
-        elif tool_name == "CreateLineChartTool":
-            # Simulate line chart creation
-            line_chart = {"line_chart": "sample_line_chart"}
-            messages.append(
-                {"role": "tool", "name": tool_name, "content": json.dumps(line_chart)}
-            )
-            plot_line_chart(tool_arguments["data"])
-        elif tool_name == "CreatePieChartTool":
-            # Simulate pie chart creation
-            pie_chart = {"pie_chart": "sample_pie_chart"}
-            messages.append(
-                {"role": "tool", "name": tool_name, "content": json.dumps(pie_chart)}
-            )
     return messages
 
 
