@@ -131,14 +131,13 @@ class RegressionAnalysisTool(BaseTool):
 
 
 # Visualization tools
-class CreateBarChartTool(BaseModel):
+class CreateBarChartTool(BaseTool):
     data: str = Field(..., description="The input data for the bar chart.")
     x: str = Field(..., description="The x-axis data.")
     y: str = Field(..., description="The y-axis data.")
 
     class Config:
         description = "Creates a bar chart from the provided data."
-        extra = "forbid"
 
 
 class CreateLineChartTool(BaseModel):
@@ -151,14 +150,13 @@ class CreateLineChartTool(BaseModel):
         extra = "forbid"
 
 
-class CreatePieChartTool(BaseModel):
+class CreatePieChartTool(BaseTool):
     data: str = Field(..., description="The input data for the pie chart.")
     labels: str = Field(..., description="The labels for the pie chart.")
     values: str = Field(..., description="The values for the pie chart.")
 
     class Config:
         description = "Creates a pie chart from the provided data."
-        extra = "forbid"
 
 
 # Example query
