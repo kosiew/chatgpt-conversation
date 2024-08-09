@@ -120,7 +120,14 @@ messages = [
     {"role": "system", "content": "You are a helpful math tutor."},
     {"role": "user", "content": chain_of_thought_question},
 ]
-test_response_format(messages, completions, LogicResponse)
+response = test_response_format(messages, completions, LogicResponse)
+
+if response.steps:  # type: ignore
+    steps = response.steps  # type: ignore
+    for step in steps:
+        ic(step.explanation)
+        ic(step.output)
+    ic(response.final_answer)  # type: ignore
 
 
 class CalendarEvent(BaseModel):
