@@ -1,9 +1,7 @@
 from enum import Enum
 from typing import Union
 
-import openai
 from icecream import ic
-from openai import OpenAI
 from pydantic import BaseModel
 
 from structured_output.structured_output import completions, test_tools

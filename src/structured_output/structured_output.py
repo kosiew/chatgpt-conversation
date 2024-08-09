@@ -44,23 +44,6 @@ def test_response_format(messages, completions, match_response_cls):
         return ic(message.refusal)
 
 
-class CalendarEvent(BaseModel):
-    name: str
-    date: str
-    participants: list[str]
-
-
-ic("test extract event information")
-messages = [
-    {"role": "system", "content": "Extract the event information."},
-    {
-        "role": "user",
-        "content": "Alice and Bob are going to a science fair on Friday.",
-    },
-]
-test_response_format(messages, completions, CalendarEvent)
-
-
 class UIType(str, Enum):
     div = "div"
     button = "button"
