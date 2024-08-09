@@ -22,7 +22,7 @@ triaging_system_prompt = """You are a Triaging Agent. Your role is to assess the
 - Analysis Agent: Performs statistical, correlation, and regression analysis.
 - Visualization Agent: Creates bar charts, line charts, and pie charts.
 
-Use the send_query_to_agents tool to forward the user's query to the relevant agents. Also, use the speak_to_user tool to get more information from the user if needed."""
+Use the TriageTool to forward the user's query to the relevant agents. Also, use the SpeakToUserTool to get more information from the user if needed."""
 
 processing_system_prompt = """You are a Data Processing Agent. Your role is to clean, transform, and aggregate data using the following tools:
 - CleanDataTool
@@ -56,6 +56,14 @@ class TriageTool(BaseModel):
     class Config:
         description = "Routes the user's query to the relevant agents for processing."
         extra = "forbid"  # Ensure no additional properties are allowed
+
+
+class SpeakToUserTool(BaseModel):
+    message: str = Field(..., description="The message to speak to the user.")
+
+    class Config:
+        description = "Sends a message to the user to request more information."
+        extra = "forbid"
 
 
 # Preprocessing tools
