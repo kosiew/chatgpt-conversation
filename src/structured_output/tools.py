@@ -6,7 +6,7 @@ from icecream import ic
 from openai import OpenAI
 from pydantic import BaseModel
 
-from structured_output.structured_output import MODEL, get_completions
+from structured_output.structured_output import completions, test_tools
 
 
 class Table(str, Enum):
@@ -56,19 +56,6 @@ class Query(BaseModel):
     order_by: OrderBy
 
 
-def test_tools(messages, tools_cls, completions):
-    completion = completions.parse(
-        model="gpt-4o-2024-08-06",
-        messages=messages,
-        tools=[
-            openai.pydantic_function_tool(tools_cls),
-        ],
-    )
-
-    parsed_arguments = completion.choices[0].message.tool_calls[0].function.parsed_arguments  # type: ignore
-    return ic(parsed_arguments)
-
-
 messages = [
     {
         "role": "system",
@@ -79,5 +66,4 @@ messages = [
         "content": "look up all my orders in may of last year that were fulfilled but not delivered on time",
     },
 ]
-completions = get_completions()
 test_tools(messages, Query, completions)

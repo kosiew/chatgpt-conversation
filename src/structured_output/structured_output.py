@@ -17,14 +17,17 @@ def get_completions():
 completions = get_completions()
 
 
-class Step(BaseModel):
-    explanation: str
-    output: str
+def test_tools(messages, tools_cls, completions):
+    completion = completions.parse(
+        model="gpt-4o-2024-08-06",
+        messages=messages,
+        tools=[
+            openai.pydantic_function_tool(tools_cls),
+        ],
+    )
 
-
-class LogicResponse(BaseModel):
-    steps: list[Step]
-    final_answer: str
+    parsed_arguments = completion.choices[0].message.tool_calls[0].function.parsed_arguments  # type: ignore
+    return ic(parsed_arguments)
 
 
 def test_response_format(messages, completions, match_response_cls):
@@ -39,22 +42,6 @@ def test_response_format(messages, completions, match_response_cls):
         return ic(message.parsed)
     else:
         return ic(message.refusal)
-
-
-ic("test Chain of Thought")
-chain_of_thought_question = input("Enter a logical question: ")
-messages = [
-    {"role": "system", "content": "You are a helpful math tutor."},
-    {"role": "user", "content": chain_of_thought_question},
-]
-response = test_response_format(messages, completions, LogicResponse)
-
-if response.steps:  # type: ignore
-    steps = response.steps  # type: ignore
-    for step in steps:
-        ic(step.explanation)
-        ic(step.output)
-    ic(response.final_answer)  # type: ignore
 
 
 class CalendarEvent(BaseModel):
