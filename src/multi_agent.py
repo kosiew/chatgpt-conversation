@@ -1,13 +1,19 @@
 import json
 from enum import Enum
 from io import StringIO
+from re import A
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from icecream import ic
 from IPython.display import Image
+
+# openai's BaseModel require Config.extra = "forbid" to ensure no additional properties are allowed
+# we're also using Config to add descriptions to the pydantic models
 from openai import BaseModel, OpenAI, pydantic_function_tool
+from pydantic import Field
 
 client = OpenAI()
 MODEL = "gpt-4o-2024-08-06"
@@ -43,54 +49,54 @@ class Agent(str, Enum):
 
 
 class TriageTool(BaseModel):
-    agents: list[Agent]
-    query: str
+    agents: List[Agent] = Field(
+        ..., description="The list of agents to route the query to."
+    )
+    query: str = Field(..., description="The user's query to be triaged.")
 
     class Config:
+        description = "Routes the user's query to the relevant agents for processing."
         extra = "forbid"  # Ensure no additional properties are allowed
 
 
 # Preprocessing tools
 class CleanDataTool(BaseModel):
-    """Cleans the provided data by removing duplicates and handling missing values."""
 
-    data: str
+    data: str = Field(..., description="The input data to be cleaned.")
 
     class Config:
+        description = "Cleans the provided data by removing duplicates and handling missing values."
         extra = "forbid"
 
 
 class TransformDataTool(BaseModel):
-    """Transforms data based on specified rules."""
-
-    data: str
-    rules: str
+    data: str = Field(..., description="The input data to be transformed.")
+    rules: str = Field(
+        ..., description="The transformation rules to be applied to the data."
+    )
 
     class Config:
+        description = "Transforms the provided data based on the specified rules."
         extra = "forbid"
 
 
 class AggregateDataTool(BaseModel):
-    """Aggregates data by specified columns and operations."""
-
-    data: str
-    group_by: list[str]
-    operations: str
+    data: str = Field(..., description="The input data to be aggregated.")
+    group_by: List[str] = Field(..., description="The columns to group by.")
+    operations: str = Field(..., description="The aggregation operations to perform.")
 
     class Config:
+        description = "Aggregates the provided data based on the specified columns and operations."
         extra = "forbid"
 
 
 # Analysis tools
 class StatAnalysisTool(BaseModel):
-    """Peforms statistical analysis on the given dataset.
-    Args:
-        BaseModel (_type_): _description_
-    """
 
-    data: str
+    data: str = Field(..., description="The input data for statistical analysis.")
 
     class Config:
+        description = "Performs statistical analysis on the provided dataset."
         extra = "forbid"
 
 
