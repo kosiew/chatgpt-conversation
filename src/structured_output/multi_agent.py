@@ -161,7 +161,10 @@ class CreatePieChartTool(BaseTool):
 # Example query
 
 user_query = """
-Below is some data. I want you to first remove the duplicates then analyze the statistics of the deduplicated data as well as plot a line chart on the deduplicated data.
+Below is some data. I want you to perform these steps:
+1. remove the duplicates 
+2. analyze the statistics of the deduplicated data 
+3. plot a line chart on the deduplicated data.
 
 house_size (m3), house_price ($)
 90, 100
