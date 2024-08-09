@@ -360,26 +360,27 @@ def handle_user_message(user_query, conversation_messages=[]):
     )
 
     tool_calls = completion.choices[0].message.tool_calls
-    conversation_messages.append([tool_call.function for tool_call in tool_calls])
+    if tool_calls:
+        conversation_messages.append([tool_call.function for tool_call in tool_calls])
 
-    # print number of tool_calls
-    ic(len(tool_calls))
+        # print number of tool_calls
+        ic(len(tool_calls))
 
-    for tool_call in tool_calls:
-        function_name = tool_call.function.name
-        function_arguments = tool_call.function.arguments
-        ic(function_name, function_arguments)
-        if function_name == "TriageTool":
-            agents = json.loads(tool_call.function.arguments)["agents"]
-            query = json.loads(tool_call.function.arguments)["query"]
-            ic(agents, query)
-            for agent in agents:
-                if agent == "Data Processing Agent":
-                    handle_data_processing_agent(query, conversation_messages)
-                elif agent == "Analysis Agent":
-                    handle_analysis_agent(query, conversation_messages)
-                elif agent == "Visualization Agent":
-                    handle_visualization_agent(query, conversation_messages)
+        for tool_call in tool_calls:
+            function_name = tool_call.function.name
+            function_arguments = tool_call.function.arguments
+            ic(function_name, function_arguments)
+            if function_name == "TriageTool":
+                agents = json.loads(tool_call.function.arguments)["agents"]
+                query = json.loads(tool_call.function.arguments)["query"]
+                ic(agents, query)
+                for agent in agents:
+                    if agent == "Data Processing Agent":
+                        handle_data_processing_agent(query, conversation_messages)
+                    elif agent == "Analysis Agent":
+                        handle_analysis_agent(query, conversation_messages)
+                    elif agent == "Visualization Agent":
+                        handle_visualization_agent(query, conversation_messages)
 
     return conversation_messages
 
