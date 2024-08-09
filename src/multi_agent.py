@@ -29,12 +29,12 @@ processing_system_prompt = """You are a Data Processing Agent. Your role is to c
 - TransformDataTool
 - AggregateDataTool"""
 
-analysis_system_prompt = """You are an Analysis Agent. Your role is to perform statistical, correlation, and regression analysis using the following tools:
+analysis_system_prompt = """You are an Analysis Agent. Your role is to obtain the cleaned data and then perform statistical, correlation, and regression analysis on the cleaned data using the following tools:
 - StatAnalysisTool
 - CorrelationAnalysisTool
 - RegressionAnalysisTool"""
 
-visualization_system_prompt = """You are a Visualization Agent. Your role is to create bar charts, line charts, and pie charts using the following tools:
+visualization_system_prompt = """You are a Visualization Agent. Your role is obtain cleaned data and to create bar charts, line charts, and pie charts of the cleaned data using the following tools:
 - CreateBarChartTool
 - CreateLineChartTool
 - CreatePieChartTool
@@ -167,6 +167,9 @@ house_size (m3), house_price ($)
 80, 90
 100, 120
 90, 100
+80, 90
+100, 120
+85, 95
 """
 
 
