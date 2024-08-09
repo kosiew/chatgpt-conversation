@@ -19,7 +19,7 @@ completions = get_completions()
 
 def test_tools(messages, tools_cls, completions):
     completion = completions.parse(
-        model="gpt-4o-2024-08-06",
+        model=MODEL,
         messages=messages,
         tools=[
             openai.pydantic_function_tool(tools_cls),
@@ -32,7 +32,7 @@ def test_tools(messages, tools_cls, completions):
 
 def test_response_format(messages, completions, match_response_cls):
     completion = completions.parse(
-        model="gpt-4o-2024-08-06",
+        model=MODEL,
         messages=messages,
         response_format=match_response_cls,
     )
