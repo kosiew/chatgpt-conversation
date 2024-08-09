@@ -47,38 +47,36 @@ class Agent(str, Enum):
     Visualization = "Visualization Agent"
 
 
-class BaseTool(BaseModel):
-    class Config:
-        extra = "forbid"
-
-
-class TriageTool(BaseTool):
+class TriageTool(BaseModel):
     agents: list[Agent] = Field(
         ..., description="The list of agents to route the query to."
     )
     query: str = Field(..., description="The user's query to be triaged.")
 
-    class Config(BaseTool.Config):
+    class Config:
         description = "Routes the user's query to the relevant agents for processing."
+        extra = "forbid"  # Ensure no additional properties are allowed
 
 
-class SpeakToUserTool(BaseTool):
+class SpeakToUserTool(BaseModel):
     message: str = Field(..., description="The message to speak to the user.")
 
-    class Config(BaseTool.Config):
+    class Config:
         description = "Sends a message to the user to request more information."
+        extra = "forbid"
 
 
 # Preprocessing tools
-class CleanDataTool(BaseTool):
+class CleanDataTool(BaseModel):
 
     data: str = Field(..., description="The input data to be cleaned.")
 
     class Config:
         description = "Cleans the provided data by removing duplicates and handling missing values."
+        extra = "forbid"
 
 
-class TransformDataTool(BaseTool):
+class TransformDataTool(BaseModel):
     data: str = Field(..., description="The input data to be transformed.")
     rules: str = Field(
         ..., description="The transformation rules to be applied to the data."
@@ -86,27 +84,30 @@ class TransformDataTool(BaseTool):
 
     class Config:
         description = "Transforms the provided data based on the specified rules."
+        extra = "forbid"
 
 
-class AggregateDataTool(BaseTool):
+class AggregateDataTool(BaseModel):
     data: str = Field(..., description="The input data to be aggregated.")
     group_by: list[str] = Field(..., description="The columns to group by.")
     operations: str = Field(..., description="The aggregation operations to perform.")
 
     class Config:
         description = "Aggregates the provided data based on the specified columns and operations."
+        extra = "forbid"
 
 
 # Analysis tools
-class StatAnalysisTool(BaseTool):
+class StatAnalysisTool(BaseModel):
 
     data: str = Field(..., description="The input data for statistical analysis.")
 
     class Config:
         description = "Performs statistical analysis on the provided dataset."
+        extra = "forbid"
 
 
-class CorrelationAnalysisTool(BaseTool):
+class CorrelationAnalysisTool(BaseModel):
     data: str = Field(..., description="The input data for correlation analysis.")
     variables: list[str] = Field(
         ..., description="The variables to calculate correlations for."
@@ -116,9 +117,10 @@ class CorrelationAnalysisTool(BaseTool):
         description = (
             "Calculates correlation coefficients between variables in the dataset."
         )
+        extra = "forbid"
 
 
-class RegressionAnalysisTool(BaseTool):
+class RegressionAnalysisTool(BaseModel):
     data: str = Field(..., description="The input data for regression analysis.")
     dependent_var: str = Field(
         ..., description="The dependent variable for regression."
@@ -129,34 +131,38 @@ class RegressionAnalysisTool(BaseTool):
 
     class Config:
         description = "Performs regression analysis on the provided dataset."
+        extra = "forbid"
 
 
 # Visualization tools
-class CreateBarChartTool(BaseTool):
+class CreateBarChartTool(BaseModel):
     data: str = Field(..., description="The input data for the bar chart.")
     x: str = Field(..., description="The x-axis data.")
     y: str = Field(..., description="The y-axis data.")
 
     class Config:
         description = "Creates a bar chart from the provided data."
+        extra = "forbid"
 
 
-class CreateLineChartTool(BaseTool):
+class CreateLineChartTool(BaseModel):
     data: str = Field(..., description="The input data for the line chart.")
     x: str = Field(..., description="The x-axis data.")
     y: str = Field(..., description="The y-axis data.")
 
     class Config:
         description = "Creates a line chart from the provided data."
+        extra = "forbid"
 
 
-class CreatePieChartTool(BaseTool):
+class CreatePieChartTool(BaseModel):
     data: str = Field(..., description="The input data for the pie chart.")
     labels: str = Field(..., description="The labels for the pie chart.")
     values: str = Field(..., description="The values for the pie chart.")
 
     class Config:
         description = "Creates a pie chart from the provided data."
+        extra = "forbid"
 
 
 # Example query
