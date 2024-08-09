@@ -105,7 +105,7 @@ class StatAnalysisTool(BaseTool):
         description = "Performs statistical analysis on the provided dataset."
 
 
-class CorrelationAnalysisTool(BaseModel):
+class CorrelationAnalysisTool(BaseTool):
     data: str = Field(..., description="The input data for correlation analysis.")
     variables: list[str] = Field(
         ..., description="The variables to calculate correlations for."
@@ -115,10 +115,9 @@ class CorrelationAnalysisTool(BaseModel):
         description = (
             "Calculates correlation coefficients between variables in the dataset."
         )
-        extra = "forbid"
 
 
-class RegressionAnalysisTool(BaseModel):
+class RegressionAnalysisTool(BaseTool):
     data: str = Field(..., description="The input data for regression analysis.")
     dependent_var: str = Field(
         ..., description="The dependent variable for regression."
@@ -129,7 +128,6 @@ class RegressionAnalysisTool(BaseModel):
 
     class Config:
         description = "Performs regression analysis on the provided dataset."
-        extra = "forbid"
 
 
 # Visualization tools
