@@ -140,14 +140,13 @@ class CreateBarChartTool(BaseTool):
         description = "Creates a bar chart from the provided data."
 
 
-class CreateLineChartTool(BaseModel):
+class CreateLineChartTool(BaseTool):
     data: str = Field(..., description="The input data for the line chart.")
     x: str = Field(..., description="The x-axis data.")
     y: str = Field(..., description="The y-axis data.")
 
     class Config:
         description = "Creates a line chart from the provided data."
-        extra = "forbid"
 
 
 class CreatePieChartTool(BaseTool):
