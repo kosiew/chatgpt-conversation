@@ -220,8 +220,21 @@ def plot_line_chart(data):
 # Tool functions used in execute_tools
 
 
-def handle_tool(tool_name, tool_arguments, messages):
-    def clean_data_tool(arguments, messages):
+class ToolHandler:
+    def __init__(self):
+        self.tool_functions = {
+            "CleanDataTool": self.clean_data_tool,
+            "TransformDataTool": self.transform_data_tool,
+            "AggregateDataTool": self.aggregate_data_tool,
+            "StatAnalysisTool": self.stat_analysis_tool,
+            "CorrelationAnalysisTool": self.correlation_analysis_tool,
+            "RegressionAnalysisTool": self.regression_analysis_tool,
+            "CreateBarChartTool": self.create_bar_chart_tool,
+            "CreateLineChartTool": self.create_line_chart_tool,
+            "CreatePieChartTool": self.create_pie_chart_tool,
+        }
+
+    def clean_data_tool(self, arguments, messages):
         cleaned_df = clean_data(arguments["data"])
         cleaned_data = {"cleaned_data": cleaned_df.to_dict()}
         messages.append(
@@ -233,7 +246,7 @@ def handle_tool(tool_name, tool_arguments, messages):
         )
         print("Cleaned data: ", cleaned_df)
 
-    def transform_data_tool(arguments, messages):
+    def transform_data_tool(self, arguments, messages):
         transformed_data = {"transformed_data": "sample_transformed_data"}
         messages.append(
             {
@@ -243,7 +256,7 @@ def handle_tool(tool_name, tool_arguments, messages):
             }
         )
 
-    def aggregate_data_tool(arguments, messages):
+    def aggregate_data_tool(self, arguments, messages):
         aggregated_data = {"aggregated_data": "sample_aggregated_data"}
         messages.append(
             {
@@ -253,7 +266,7 @@ def handle_tool(tool_name, tool_arguments, messages):
             }
         )
 
-    def stat_analysis_tool(arguments, messages):
+    def stat_analysis_tool(self, arguments, messages):
         stats_df = stat_analysis(arguments["data"])
         stats = {"stats": stats_df.to_dict()}
         messages.append(
@@ -261,7 +274,7 @@ def handle_tool(tool_name, tool_arguments, messages):
         )
         print("Statistical Analysis: ", stats_df)
 
-    def correlation_analysis_tool(arguments, messages):
+    def correlation_analysis_tool(self, arguments, messages):
         correlations = {"correlations": "sample_correlations"}
         messages.append(
             {
@@ -271,7 +284,7 @@ def handle_tool(tool_name, tool_arguments, messages):
             }
         )
 
-    def regression_analysis_tool(arguments, messages):
+    def regression_analysis_tool(self, arguments, messages):
         regression_results = {"regression_results": "sample_regression_results"}
         messages.append(
             {
@@ -281,7 +294,7 @@ def handle_tool(tool_name, tool_arguments, messages):
             }
         )
 
-    def create_bar_chart_tool(arguments, messages):
+    def create_bar_chart_tool(self, arguments, messages):
         bar_chart = {"bar_chart": "sample_bar_chart"}
         messages.append(
             {
@@ -291,7 +304,7 @@ def handle_tool(tool_name, tool_arguments, messages):
             }
         )
 
-    def create_line_chart_tool(arguments, messages):
+    def create_line_chart_tool(self, arguments, messages):
         line_chart = {"line_chart": "sample_line_chart"}
         messages.append(
             {
@@ -302,7 +315,7 @@ def handle_tool(tool_name, tool_arguments, messages):
         )
         plot_line_chart(arguments["data"])
 
-    def create_pie_chart_tool(arguments, messages):
+    def create_pie_chart_tool(self, arguments, messages):
         pie_chart = {"pie_chart": "sample_pie_chart"}
         messages.append(
             {
@@ -312,22 +325,12 @@ def handle_tool(tool_name, tool_arguments, messages):
             }
         )
 
-    tool_functions = {
-        "CleanDataTool": clean_data_tool,
-        "TransformDataTool": transform_data_tool,
-        "AggregateDataTool": aggregate_data_tool,
-        "StatAnalysisTool": stat_analysis_tool,
-        "CorrelationAnalysisTool": correlation_analysis_tool,
-        "RegressionAnalysisTool": regression_analysis_tool,
-        "CreateBarChartTool": create_bar_chart_tool,
-        "CreateLineChartTool": create_line_chart_tool,
-        "CreatePieChartTool": create_pie_chart_tool,
-    }
-
-    if tool_name in tool_functions:
-        tool_functions[tool_name](tool_arguments, messages)
-    else:
-        ic(f"Unknown tool: {tool_name}")
+    # this is called in execute_tools
+    def __call__(self, tool_name, tool_arguments, messages):
+        if tool_name in self.tool_functions:
+            self.tool_functions[tool_name](tool_arguments, messages)
+        else:
+            print(f"Unknown tool: {tool_name}")
 
 
 # invoke the function to execute the tools
@@ -355,9 +358,10 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
 
     tool_calls = response.choices[0].message.tool_calls
     if tool_calls:
+        tool_handler = ToolHandler()
         conversation_messages.append([tool_call.function for tool_call in tool_calls])
         execute_tool(
-            response.choices[0].message.tool_calls, conversation_messages, handle_tool
+            response.choices[0].message.tool_calls, conversation_messages, tool_handler
         )
 
 
