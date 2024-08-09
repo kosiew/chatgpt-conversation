@@ -2,7 +2,6 @@ import json
 from enum import Enum
 from io import StringIO
 from re import A
-from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -49,7 +48,7 @@ class Agent(str, Enum):
 
 
 class TriageTool(BaseModel):
-    agents: List[Agent] = Field(
+    agents: list[Agent] = Field(
         ..., description="The list of agents to route the query to."
     )
     query: str = Field(..., description="The user's query to be triaged.")
@@ -82,7 +81,7 @@ class TransformDataTool(BaseModel):
 
 class AggregateDataTool(BaseModel):
     data: str = Field(..., description="The input data to be aggregated.")
-    group_by: List[str] = Field(..., description="The columns to group by.")
+    group_by: list[str] = Field(..., description="The columns to group by.")
     operations: str = Field(..., description="The aggregation operations to perform.")
 
     class Config:
@@ -101,77 +100,60 @@ class StatAnalysisTool(BaseModel):
 
 
 class CorrelationAnalysisTool(BaseModel):
-    """Calculates correlation coefficients between variables in the dataset.
-
-    Args:
-        BaseModel (_type_): _description_
-    """
-
-    data: str
-    variables: list[str]
+    data: str = Field(..., description="The input data for correlation analysis.")
+    variables: list[str] = Field(
+        ..., description="The variables to calculate correlations for."
+    )
 
     class Config:
+        description = (
+            "Calculates correlation coefficients between variables in the dataset."
+        )
         extra = "forbid"
 
 
 class RegressionAnalysisTool(BaseModel):
-    """Performs regression analysis on the dataset.
-
-    Args:
-        BaseModel (_type_): _description_
-    """
-
-    data: str
-    dependent_var: str
-    independent_vars: list[str]
+    data: str = Field(..., description="The input data for regression analysis.")
+    dependent_var: str = Field(
+        ..., description="The dependent variable for regression."
+    )
+    independent_vars: list[str] = Field(
+        ..., description="The independent variables for regression."
+    )
 
     class Config:
+        description = "Performs regression analysis on the provided dataset."
         extra = "forbid"
 
 
 # Visualization tools
 class CreateBarChartTool(BaseModel):
-    """Creates a bar chart from the provided data.
-
-    Args:
-        BaseModel (_type_): _description_
-    """
-
-    data: str
-    x: str
-    y: str
+    data: str = Field(..., description="The input data for the bar chart.")
+    x: str = Field(..., description="The x-axis data.")
+    y: str = Field(..., description="The y-axis data.")
 
     class Config:
+        description = "Creates a bar chart from the provided data."
         extra = "forbid"
 
 
 class CreateLineChartTool(BaseModel):
-    """Creates a line chart from the provided data.
-
-    Args:
-        BaseModel (_type_): _description_
-    """
-
-    data: str
-    x: str
-    y: str
+    data: str = Field(..., description="The input data for the line chart.")
+    x: str = Field(..., description="The x-axis data.")
+    y: str = Field(..., description="The y-axis data.")
 
     class Config:
+        description = "Creates a line chart from the provided data."
         extra = "forbid"
 
 
 class CreatePieChartTool(BaseModel):
-    """Creates a pie chart from the provided data.
-
-    Args:
-        BaseModel (_type_): _description_
-    """
-
-    data: str
-    labels: str
-    values: str
+    data: str = Field(..., description="The input data for the pie chart.")
+    labels: str = Field(..., description="The labels for the pie chart.")
+    values: str = Field(..., description="The values for the pie chart.")
 
     class Config:
+        description = "Creates a pie chart from the provided data."
         extra = "forbid"
 
 
