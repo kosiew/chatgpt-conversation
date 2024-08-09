@@ -69,13 +69,12 @@ class SpeakToUserTool(BaseTool):
 
 
 # Preprocessing tools
-class CleanDataTool(BaseModel):
+class CleanDataTool(BaseTool):
 
     data: str = Field(..., description="The input data to be cleaned.")
 
     class Config:
         description = "Cleans the provided data by removing duplicates and handling missing values."
-        extra = "forbid"
 
 
 class TransformDataTool(BaseModel):
