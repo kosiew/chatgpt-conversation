@@ -77,7 +77,7 @@ class CleanDataTool(BaseTool):
         description = "Cleans the provided data by removing duplicates and handling missing values."
 
 
-class TransformDataTool(BaseModel):
+class TransformDataTool(BaseTool):
     data: str = Field(..., description="The input data to be transformed.")
     rules: str = Field(
         ..., description="The transformation rules to be applied to the data."
@@ -85,17 +85,15 @@ class TransformDataTool(BaseModel):
 
     class Config:
         description = "Transforms the provided data based on the specified rules."
-        extra = "forbid"
 
 
-class AggregateDataTool(BaseModel):
+class AggregateDataTool(BaseTool):
     data: str = Field(..., description="The input data to be aggregated.")
     group_by: list[str] = Field(..., description="The columns to group by.")
     operations: str = Field(..., description="The aggregation operations to perform.")
 
     class Config:
         description = "Aggregates the provided data based on the specified columns and operations."
-        extra = "forbid"
 
 
 # Analysis tools
