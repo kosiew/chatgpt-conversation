@@ -309,10 +309,10 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
         tools=[pydantic_function_tool(tool) for tool in tools],
     )
 
-    conversation_messages.append(
-        [tool_call.function for tool_call in response.choices[0].message.tool_calls]
-    )
-    execute_tool(response.choices[0].message.tool_calls, conversation_messages)
+    tool_calls = response.choices[0].message.tool_calls
+    if tool_calls:
+        conversation_messages.append([tool_call.function for tool_call in tool_calls])
+        execute_tool(response.choices[0].message.tool_calls, conversation_messages)
 
 
 # Define the functions to handle each agent's processing
