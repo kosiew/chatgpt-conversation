@@ -95,7 +95,7 @@ class Step(BaseModel):
     output: str
 
 
-class MathResponse(BaseModel):
+class LogicResponse(BaseModel):
     steps: list[Step]
     final_answer: str
 
@@ -115,11 +115,12 @@ def test_response_format(messages, completions, match_response_cls):
 
 
 ic("test Chain of Thought")
+chain_of_thought_question = input("Enter a logical question: ")
 messages = [
     {"role": "system", "content": "You are a helpful math tutor."},
-    {"role": "user", "content": "solve 8x + 31 = 2"},
+    {"role": "user", "content": chain_of_thought_question},
 ]
-test_response_format(messages, completions, MathResponse)
+test_response_format(messages, completions, LogicResponse)
 
 
 class CalendarEvent(BaseModel):
