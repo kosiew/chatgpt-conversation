@@ -22,7 +22,8 @@ triaging_system_prompt = """You are a Triaging Agent. Your role is to assess the
 - Data Processing Agent: Cleans, transforms, and aggregates data.
 - Analysis Agent: Performs statistical, correlation, and regression analysis.
 - Visualization Agent: Creates bar charts, line charts, and pie charts.
-Use the TriageTool to forward the user's query to the relevant agents. Also, use the SpeakToUserTool to speak to user."""
+- Speak To User Agent: Convey message to user
+Use the TriageTool to forward the user's query to the relevant agents."""
 
 processing_system_prompt = """You are a Data Processing Agent. Your role is to clean, transform, and aggregate data using the following tools:
 - CleanDataTool
