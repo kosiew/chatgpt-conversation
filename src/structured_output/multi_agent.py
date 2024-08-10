@@ -342,7 +342,9 @@ def execute_tool_calls(tool_calls, tool_handler_cls, messages=[]):
 
 
 # Define a helper function to handle agent processing
-def handle_agent(query, conversation_messages, system_prompt, tools):
+def handle_agent(
+    query, conversation_messages, system_prompt, tools, tool_handler_cls=ToolHandler
+):
     messages = [{"role": "system", "content": system_prompt}]
     messages.append({"role": "user", "content": query})
 
@@ -356,7 +358,7 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
 
     tool_calls = response.choices[0].message.tool_calls
     if tool_calls:
-        execute_tool_calls(tool_calls, ToolHandler, conversation_messages)
+        execute_tool_calls(tool_calls, tool_handler_cls, conversation_messages)
 
 
 # Define the functions to handle each agent's processing
