@@ -168,7 +168,7 @@ Below is some data. I want you to perform these steps:
 1. remove the duplicates 
 2. analyze the statistics of the deduplicated data
 3. plot a line chart on the deduplicated data.
-4. Good Day
+4. say Good Day to user
 
 house_size (m3), house_price ($)
 80, 90
