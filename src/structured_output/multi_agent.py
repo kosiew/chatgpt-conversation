@@ -223,6 +223,7 @@ def plot_line_chart(data):
 class ToolHandler:
     def __init__(self):
         self.tool_functions = {
+            "TriageTool": self.triage_tool,
             "CleanDataTool": self.clean_data_tool,
             "TransformDataTool": self.transform_data_tool,
             "AggregateDataTool": self.aggregate_data_tool,
@@ -233,6 +234,18 @@ class ToolHandler:
             "CreateLineChartTool": self.create_line_chart_tool,
             "CreatePieChartTool": self.create_pie_chart_tool,
         }
+
+    def triage_tool(self, arguments, messages):
+        agents = json.loads(arguments)["agents"]
+        query = json.loads(arguments)["query"]
+        ic(agents, query)
+        for agent in agents:
+            if agent == "Data Processing Agent":
+                handle_data_processing_agent(query, messages)
+            elif agent == "Analysis Agent":
+                handle_analysis_agent(query, messages)
+            elif agent == "Visualization Agent":
+                handle_visualization_agent(query, messages)
 
     def clean_data_tool(self, arguments, messages):
         cleaned_df = clean_data(arguments["data"])
@@ -414,24 +427,13 @@ def handle_user_message(user_query, conversation_messages=[]):
 
         # print number of tool_calls
         ic(len(tool_calls))
-
+        tool_handler = ToolHandler()
         for tool_call in tool_calls:
             function_name = tool_call.function.name
             function_arguments = tool_call.function.arguments
             ic(function_name, function_arguments)
-            if function_name == "TriageTool":
-                agents = json.loads(tool_call.function.arguments)["agents"]
-                query = json.loads(tool_call.function.arguments)["query"]
-                ic(agents, query)
-                for agent in agents:
-                    if agent == "Data Processing Agent":
-                        handle_data_processing_agent(query, conversation_messages)
-                    elif agent == "Analysis Agent":
-                        handle_analysis_agent(query, conversation_messages)
-                    elif agent == "Visualization Agent":
-                        handle_visualization_agent(query, conversation_messages)
-
-    return conversation_messages
+            tool_handler(function_name, function_arguments, conversation_messages)
+        return conversation_messages
 
 
 conversation_messages = handle_user_message(user_query)
