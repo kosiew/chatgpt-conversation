@@ -339,11 +339,11 @@ class ToolHandler:
         )
 
     # this is called in execute_tools
-    def __call__(self, tool_name, tool_arguments, messages):
-        if tool_name in self.tool_functions:
-            self.tool_functions[tool_name](tool_arguments, messages)
+    def __call__(self, function_name, function_arguments, messages):
+        if function_name in self.tool_functions:
+            self.tool_functions[function_name](function_arguments, messages)
         else:
-            print(f"Unknown tool: {tool_name}")
+            print(f"Unknown function: {function_name}")
 
 
 def execute_tool_calls(tool_calls, tool_handler_cls, messages=[]):
