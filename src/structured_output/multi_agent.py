@@ -257,7 +257,7 @@ class ToolHandler:
                 "content": json.dumps(cleaned_data),
             }
         )
-        print("Cleaned data: ", cleaned_df)
+        ic("Cleaned data: ", cleaned_df)
 
     def transform_data_tool(self, arguments, messages):
         transformed_data = {"transformed_data": "sample_transformed_data"}
@@ -285,7 +285,7 @@ class ToolHandler:
         messages.append(
             {"role": "tool", "name": "StatAnalysisTool", "content": json.dumps(stats)}
         )
-        print("Statistical Analysis: ", stats_df)
+        ic("Statistical Analysis: ", stats_df)
 
     def correlation_analysis_tool(self, arguments, messages):
         correlations = {"correlations": "sample_correlations"}
@@ -343,7 +343,7 @@ class ToolHandler:
         if function_name in self.tool_functions:
             self.tool_functions[function_name](function_arguments, messages)
         else:
-            print(f"Unknown function: {function_name}")
+            ic(f"Unknown function: {function_name}")
 
 
 def execute_tool_calls(tool_calls, tool_handler_cls, messages=[]):
