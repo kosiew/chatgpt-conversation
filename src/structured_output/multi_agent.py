@@ -347,13 +347,14 @@ class ToolHandler:
 
 
 def execute_tool_calls(tool_calls, tool_handler_cls, messages=[]):
-    ic(len(tool_calls))
+    tool_calls_len = ic(len(tool_calls))
     tool_handler = tool_handler_cls()
     messages.append([tool_call.function for tool_call in tool_calls])
-    for tool_call in tool_calls:
+    for i, tool_call in enumerate(tool_calls):
         function_name = tool_call.function.name
         function_arguments = json.loads(tool_call.function.arguments)
-        ic(function_name, function_arguments)
+        index = f"{i+1} of {tool_calls_len}"
+        ic(index, function_name, function_arguments)
         tool_handler(function_name, function_arguments, messages)
 
     return messages
