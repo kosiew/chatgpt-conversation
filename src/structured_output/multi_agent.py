@@ -346,20 +346,15 @@ class ToolHandler:
             print(f"Unknown tool: {tool_name}")
 
 
-def execute_tool_calls(conversation_messages, tool_calls):
+def execute_tool_calls(messages, tool_calls):
     ic(len(tool_calls))
     tool_handler = ToolHandler()
-    conversation_messages.append([tool_call.function for tool_call in tool_calls])
-    execute_tool(tool_calls, conversation_messages, tool_handler)
-
-
-# invoke the function to execute the tools
-def execute_tool(tool_calls, messages, handler):
+    messages.append([tool_call.function for tool_call in tool_calls])
     for tool_call in tool_calls:
         function_name = tool_call.function.name
         function_arguments = json.loads(tool_call.function.arguments)
         ic(function_name, function_arguments)
-        handler(function_name, function_arguments, messages)
+        tool_handler(function_name, function_arguments, messages)
 
     return messages
 
