@@ -236,8 +236,8 @@ class ToolHandler:
         }
 
     def triage_tool(self, arguments, messages):
-        agents = json.loads(arguments)["agents"]
-        query = json.loads(arguments)["query"]
+        agents = arguments["agents"]
+        query = arguments["query"]
         ic(agents, query)
         for agent in agents:
             if agent == "Data Processing Agent":
@@ -421,17 +421,8 @@ def handle_user_message(user_query, conversation_messages=[]):
 
     tool_calls = completion.choices[0].message.tool_calls
     if tool_calls:
-        conversation_messages.append([tool_call.function for tool_call in tool_calls])
-
-        # print number of tool_calls
-        ic(len(tool_calls))
-        tool_handler = ToolHandler()
-        for tool_call in tool_calls:
-            function_name = tool_call.function.name
-            function_arguments = tool_call.function.arguments
-            ic(function_name, function_arguments)
-            tool_handler(function_name, function_arguments, conversation_messages)
-        return conversation_messages
+        execute_tool_calls(conversation_messages, tool_calls)
+    return conversation_messages
 
 
 conversation_messages = handle_user_message(user_query)
