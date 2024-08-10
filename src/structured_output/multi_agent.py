@@ -346,6 +346,13 @@ class ToolHandler:
             print(f"Unknown tool: {tool_name}")
 
 
+def execute_tool_calls(conversation_messages, tool_calls):
+    ic(len(tool_calls))
+    tool_handler = ToolHandler()
+    conversation_messages.append([tool_call.function for tool_call in tool_calls])
+    execute_tool(tool_calls, conversation_messages, tool_handler)
+
+
 # invoke the function to execute the tools
 def execute_tool(tool_calls, messages, handler):
     for tool_call in tool_calls:
@@ -372,13 +379,6 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
     tool_calls = response.choices[0].message.tool_calls
     if tool_calls:
         execute_tool_calls(conversation_messages, tool_calls)
-
-
-def execute_tool_calls(conversation_messages, tool_calls):
-    ic(len(tool_calls))
-    tool_handler = ToolHandler()
-    conversation_messages.append([tool_call.function for tool_call in tool_calls])
-    execute_tool(tool_calls, conversation_messages, tool_handler)
 
 
 # Define the functions to handle each agent's processing
@@ -426,8 +426,17 @@ def handle_user_message(user_query, conversation_messages=[]):
 
     tool_calls = completion.choices[0].message.tool_calls
     if tool_calls:
-        execute_tool_calls(conversation_messages, tool_calls)
-    return conversation_messages
+        conversation_messages.append([tool_call.function for tool_call in tool_calls])
+
+        # print number of tool_calls
+        ic(len(tool_calls))
+        tool_handler = ToolHandler()
+        for tool_call in tool_calls:
+            function_name = tool_call.function.name
+            function_arguments = tool_call.function.arguments
+            ic(function_name, function_arguments)
+            tool_handler(function_name, function_arguments, conversation_messages)
+        return conversation_messages
 
 
 conversation_messages = handle_user_message(user_query)
