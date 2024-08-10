@@ -41,6 +41,8 @@ visualization_system_prompt = """You are a Visualization Agent. Your role is to 
 - CreatePieChartTool
 """
 
+speak_system_prompt = """You are a Speak To User Agent. Your role is to convey messages to the user, in a funny way, always include a Dad joke after the message, using SpeakToUserTool."""
+
 
 class Agent(str, Enum):
     Data_Processing = "Data Processing Agent"
@@ -259,7 +261,7 @@ class ToolHandler:
             elif agent == "Visualization Agent":
                 handle_visualization_agent(query, messages)
             elif agent == "Speak To User Agent":
-                speak_to_user(query)
+                handle_speak_to_user_agent(query, messages)
 
     def speak_to_user_tool(self, arguments, messages):
         message = arguments["message"]
@@ -384,7 +386,8 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
     messages = [{"role": "system", "content": system_prompt}]
     messages.append({"role": "user", "content": query})
 
-    response = client.chat.completions.create(
+    # response = client.chat.completions.create also works
+    response = client.beta.chat.completions.parse(
         model=MODEL,
         messages=messages,
         temperature=0,
@@ -421,6 +424,15 @@ def handle_visualization_agent(query, conversation_messages):
         conversation_messages,
         visualization_system_prompt,
         [CreateBarChartTool, CreateLineChartTool, CreatePieChartTool],
+    )
+
+
+def handle_speak_to_user_agent(query, conversation_messages):
+    handle_agent(
+        query,
+        conversation_messages,
+        speak_system_prompt,
+        [SpeakToUserTool],
     )
 
 
