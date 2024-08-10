@@ -437,7 +437,7 @@ def handle_speak_to_user_agent(query, conversation_messages):
 
 
 # Function to handle user input and triaging
-def handle_user_message(user_query, conversation_messages=[]):
+def handle_user_query(user_query, conversation_messages=[]):
     handle_agent(
         user_query,
         conversation_messages,
@@ -447,5 +447,5 @@ def handle_user_message(user_query, conversation_messages=[]):
     return conversation_messages
 
 
-conversation_messages = handle_user_message(user_query)
+conversation_messages = handle_user_query(user_query)
 ic(conversation_messages)
