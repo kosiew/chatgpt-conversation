@@ -434,4 +434,5 @@ def handle_user_message(user_query, conversation_messages=[]):
     return conversation_messages
 
 
-handle_user_message(user_query)
+conversation_messages = handle_user_message(user_query)
+ic(conversation_messages)
