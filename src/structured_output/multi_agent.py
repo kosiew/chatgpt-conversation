@@ -336,10 +336,10 @@ class ToolHandler:
 # invoke the function to execute the tools
 def execute_tool(tool_calls, messages, handler):
     for tool_call in tool_calls:
-        tool_name = tool_call.function.name
-        tool_arguments = json.loads(tool_call.function.arguments)
-        ic(tool_name, tool_arguments)
-        handler(tool_name, tool_arguments, messages)
+        function_name = tool_call.function.name
+        function_arguments = json.loads(tool_call.function.arguments)
+        ic(function_name, function_arguments)
+        handler(function_name, function_arguments, messages)
 
     return messages
 
