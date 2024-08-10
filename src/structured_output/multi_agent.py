@@ -438,22 +438,12 @@ def handle_speak_to_user_agent(query, conversation_messages):
 
 # Function to handle user input and triaging
 def handle_user_message(user_query, conversation_messages=[]):
-    user_message = {"role": "user", "content": user_query}
-    conversation_messages.append(user_message)
-
-    messages = [{"role": "system", "content": triaging_system_prompt}]
-    messages.extend(conversation_messages)
-
-    completion = client.beta.chat.completions.parse(
-        model=MODEL,
-        messages=messages,
-        temperature=0,
-        tools=[pydantic_function_tool(TriageTool)],
+    handle_agent(
+        user_query,
+        conversation_messages,
+        triaging_system_prompt,
+        [TriageTool],
     )
-
-    tool_calls = completion.choices[0].message.tool_calls
-    if tool_calls:
-        execute_tool_calls(tool_calls, ToolHandler, conversation_messages)
     return conversation_messages
 
 
