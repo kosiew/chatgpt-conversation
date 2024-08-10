@@ -264,6 +264,7 @@ class ToolHandler:
     def speak_to_user_tool(self, arguments, messages):
         message = arguments["message"]
         speak_to_user(message)
+        messages.append({"role": "tool", "name": "SpeakToUserTool", "content": message})
 
     def clean_data_tool(self, arguments, messages):
         cleaned_df = clean_data(arguments["data"])
