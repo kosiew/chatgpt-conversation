@@ -263,101 +263,61 @@ class ToolHandler:
             elif agent == "Speak To User Agent":
                 handle_speak_to_user_agent(query, messages)
 
+    def append_message(self, messages, tool_name, data):
+        messages.append(
+            {
+                "role": "tool",
+                "name": tool_name,
+                "content": json.dumps(data),
+            }
+        )
+
     def speak_to_user_tool(self, arguments, messages):
         message = arguments["message"]
+        message_data = {"message": message}
         speak_to_user(message)
-        messages.append({"role": "tool", "name": "SpeakToUserTool", "content": message})
+        self.append_message(messages, "SpeakToUserTool", message_data)
 
     def clean_data_tool(self, arguments, messages):
         cleaned_df = clean_data(arguments["data"])
         cleaned_data = {"cleaned_data": cleaned_df.to_dict()}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "CleanDataTool",
-                "content": json.dumps(cleaned_data),
-            }
-        )
+        self.append_message(messages, "CleanDataTool", cleaned_data)
         ic("Cleaned data: ", cleaned_df)
 
     def transform_data_tool(self, arguments, messages):
         transformed_data = {"transformed_data": "sample_transformed_data"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "TransformDataTool",
-                "content": json.dumps(transformed_data),
-            }
-        )
+        self.append_message(messages, "TransformDataTool", transformed_data)
 
     def aggregate_data_tool(self, arguments, messages):
         aggregated_data = {"aggregated_data": "sample_aggregated_data"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "AggregateDataTool",
-                "content": json.dumps(aggregated_data),
-            }
-        )
+        self.append_message(messages, "AggregateDataTool", aggregated_data)
 
     def stat_analysis_tool(self, arguments, messages):
         stats_df = stat_analysis(arguments["data"])
         stats = {"stats": stats_df.to_dict()}
-        messages.append(
-            {"role": "tool", "name": "StatAnalysisTool", "content": json.dumps(stats)}
-        )
+
         ic("Statistical Analysis: ", stats_df)
 
     def correlation_analysis_tool(self, arguments, messages):
         correlations = {"correlations": "sample_correlations"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "CorrelationAnalysisTool",
-                "content": json.dumps(correlations),
-            }
-        )
+        self.append_message(messages, "CorrelationAnalysisTool", correlations)
 
     def regression_analysis_tool(self, arguments, messages):
         regression_results = {"regression_results": "sample_regression_results"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "RegressionAnalysisTool",
-                "content": json.dumps(regression_results),
-            }
-        )
+        self.append_message(messages, "RegressionAnalysisTool", regression_results)
 
     def create_bar_chart_tool(self, arguments, messages):
         bar_chart = {"bar_chart": "sample_bar_chart"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "CreateBarChartTool",
-                "content": json.dumps(bar_chart),
-            }
-        )
+        self.append_message(messages, "CreateBarChartTool", bar_chart)
 
     def create_line_chart_tool(self, arguments, messages):
         line_chart = {"line_chart": "sample_line_chart"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "CreateLineChartTool",
-                "content": json.dumps(line_chart),
-            }
-        )
+        self.append_message(messages, "CreateLineChartTool", line_chart)
         plot_line_chart(arguments["data"])
 
     def create_pie_chart_tool(self, arguments, messages):
         pie_chart = {"pie_chart": "sample_pie_chart"}
-        messages.append(
-            {
-                "role": "tool",
-                "name": "CreatePieChartTool",
-                "content": json.dumps(pie_chart),
-            }
-        )
+        self.append_message(messages, "CreatePieChartTool", pie_chart)
 
     # this is called in execute_tools
     def __call__(self, function_name, function_arguments, messages):
@@ -389,7 +349,7 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
     # response = client.chat.completions.create also works
     response = client.beta.chat.completions.parse(
         model=MODEL,
-        messages=messages,
+        messages=messages,  # type: ignore
         temperature=0,
         tools=[pydantic_function_tool(tool) for tool in tools],
     )
