@@ -1,11 +1,12 @@
 import json
+import os
 from enum import Enum
 from io import StringIO
-from re import A
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from gtts import gTTS
 from icecream import ic
 from IPython.display import Image
 
@@ -21,7 +22,7 @@ triaging_system_prompt = """You are a Triaging Agent. Your role is to assess the
 - Data Processing Agent: Cleans, transforms, and aggregates data.
 - Analysis Agent: Performs statistical, correlation, and regression analysis.
 - Visualization Agent: Creates bar charts, line charts, and pie charts.
-Use the TriageTool to forward the user's query to the relevant agents. Also, use the SpeakToUserTool to get more information from the user if needed."""
+Use the TriageTool to forward the user's query to the relevant agents. Also, use the SpeakToUserTool to speak to user."""
 
 processing_system_prompt = """You are a Data Processing Agent. Your role is to clean, transform, and aggregate data using the following tools:
 - CleanDataTool
@@ -44,6 +45,7 @@ class Agent(str, Enum):
     Data_Processing = "Data Processing Agent"
     Analysis = "Analysis Agent"
     Visualization = "Visualization Agent"
+    SpeakToUser = "Speak To User Agent"
 
 
 class BaseTool(BaseModel):
@@ -163,8 +165,9 @@ class CreatePieChartTool(BaseTool):
 user_query = """
 Below is some data. I want you to perform these steps:
 1. remove the duplicates 
-2. analyze the statistics of the deduplicated data 
+2. analyze the statistics of the deduplicated data
 3. plot a line chart on the deduplicated data.
+4. say Good Day to user
 
 house_size (m3), house_price ($)
 80, 90
@@ -187,6 +190,13 @@ def clean_data(data):
     df = pd.read_csv(data_io, sep=",")
     df_deduplicated = df.drop_duplicates()
     return df_deduplicated
+
+
+def speak_to_user(message):
+    language = "en"
+    speech = gTTS(text=message, lang=language, slow=False)
+    speech.save("output.mp3")
+    os.system("afplay output.mp3")
 
 
 def stat_analysis(data):
@@ -225,6 +235,7 @@ class ToolHandler:
         self.tool_functions = {
             "TriageTool": self.triage_tool,
             "CleanDataTool": self.clean_data_tool,
+            "SpeakToUserTool": self.speak_to_user_tool,
             "TransformDataTool": self.transform_data_tool,
             "AggregateDataTool": self.aggregate_data_tool,
             "StatAnalysisTool": self.stat_analysis_tool,
@@ -246,6 +257,12 @@ class ToolHandler:
                 handle_analysis_agent(query, messages)
             elif agent == "Visualization Agent":
                 handle_visualization_agent(query, messages)
+            elif agent == "Speak To User Agent":
+                speak_to_user(query)
+
+    def speak_to_user_tool(self, arguments, messages):
+        message = arguments["message"]
+        speak_to_user(message)
 
     def clean_data_tool(self, arguments, messages):
         cleaned_df = clean_data(arguments["data"])
