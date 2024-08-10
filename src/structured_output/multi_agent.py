@@ -170,7 +170,7 @@ Below is some data. I want you to perform these steps:
 1. remove the duplicates 
 2. analyze the statistics of the deduplicated data
 3. plot a line chart on the deduplicated data.
-4. message to user - "Good Day and Cowabunga!"
+4. message to user - "Good Day!"
 
 house_size (m3), house_price ($)
 80, 90
@@ -343,7 +343,7 @@ def execute_tool_calls(tool_calls, tool_handler_cls, messages=[]):
 
 # Define a helper function to handle agent processing
 def handle_agent(
-    query, conversation_messages, system_prompt, tools, tool_handler_cls=ToolHandler
+    query, system_prompt, tools, conversation_messages=[], tool_handler_cls=ToolHandler
 ):
     messages = [{"role": "system", "content": system_prompt}]
     messages.append({"role": "user", "content": query})
@@ -365,36 +365,36 @@ def handle_agent(
 def handle_data_processing_agent(query, conversation_messages):
     handle_agent(
         query,
-        conversation_messages,
         processing_system_prompt,
         [CleanDataTool, TransformDataTool, AggregateDataTool],
+        conversation_messages,
     )
 
 
 def handle_analysis_agent(query, conversation_messages):
     handle_agent(
         query,
-        conversation_messages,
         analysis_system_prompt,
         [StatAnalysisTool, CorrelationAnalysisTool, RegressionAnalysisTool],
+        conversation_messages,
     )
 
 
 def handle_visualization_agent(query, conversation_messages):
     handle_agent(
         query,
-        conversation_messages,
         visualization_system_prompt,
         [CreateBarChartTool, CreateLineChartTool, CreatePieChartTool],
+        conversation_messages,
     )
 
 
 def handle_speak_to_user_agent(query, conversation_messages):
     handle_agent(
         query,
-        conversation_messages,
         speak_system_prompt,
         [SpeakToUserTool],
+        conversation_messages,
     )
 
 
@@ -402,9 +402,9 @@ def handle_speak_to_user_agent(query, conversation_messages):
 def handle_user_query(user_query, conversation_messages=[]):
     handle_agent(
         user_query,
-        conversation_messages,
         triaging_system_prompt,
         [TriageTool],
+        conversation_messages,
     )
     return conversation_messages
 
