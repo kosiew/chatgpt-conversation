@@ -346,7 +346,7 @@ class ToolHandler:
             print(f"Unknown tool: {tool_name}")
 
 
-def execute_tool_calls(messages, tool_calls):
+def execute_tool_calls(tool_calls, messages=[]):
     ic(len(tool_calls))
     tool_handler = ToolHandler()
     messages.append([tool_call.function for tool_call in tool_calls])
@@ -373,7 +373,7 @@ def handle_agent(query, conversation_messages, system_prompt, tools):
 
     tool_calls = response.choices[0].message.tool_calls
     if tool_calls:
-        execute_tool_calls(conversation_messages, tool_calls)
+        execute_tool_calls(tool_calls, conversation_messages)
 
 
 # Define the functions to handle each agent's processing
@@ -421,7 +421,7 @@ def handle_user_message(user_query, conversation_messages=[]):
 
     tool_calls = completion.choices[0].message.tool_calls
     if tool_calls:
-        execute_tool_calls(conversation_messages, tool_calls)
+        execute_tool_calls(tool_calls, conversation_messages)
     return conversation_messages
 
 
