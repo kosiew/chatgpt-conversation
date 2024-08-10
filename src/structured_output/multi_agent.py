@@ -406,6 +406,7 @@ def handle_user_query(user_query, conversation_messages=[]):
         [TriageTool],
         conversation_messages,
     )
+    # TriageTool will generate multiple tool_calls, query for different agents
     return conversation_messages
 
 
